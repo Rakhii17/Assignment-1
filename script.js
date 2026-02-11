@@ -11,26 +11,27 @@ const clearAllBtn = document.getElementById("clearAllBtn");
 const addSampleBtn = document.getElementById("addSampleBtn");
 const eventContainer = document.getElementById("eventContainer");
 
-
+// sample event data
 let sampleEvent =
     [
         {
-            title: "Web dev",
-            date: "4-12-2026",
+            title: "Web development",
+            date: "02-11-2026",
             category: "workshop",
-            description: "hasvhuno oadhoo asoikla dfoi"
+            description: "a workshop related to web development"
         },
         {
             title: "Web dev2",
             date: "5-12-2026",
             category: "conference",
-            description: "hasvhuno oadshdbf hoo asoikla dfoi"
+            description: "conference related to web development"
         }
-    ]
+    ];
 
 //   create event card  
 function createEventCard(eventData){
     const card = document.createElement("div");
+    card.className="event-card";
     card.innerHTML=`
     <button class=delete-btn>X</button>
     <h3>${eventData.title}</h3>
@@ -42,15 +43,30 @@ function createEventCard(eventData){
 
 }
 
-function addEvent(eventData){
+// show empty state if there is no event 
+function showEmptyState(){
   const emptyState=document.querySelector(".empty-state");
   if(emptyState) emptyState.remove();
 
-  eventContainer.appendChild(createEventCard(eventData));
-
+  const emptyDiv = document.createElement("div");
+  emptyDiv.className = "empty-state";
+  emptyDiv.textContent = "No events to display";
+  eventContainer.appendChild(emptyDiv);
 }
 
+// remove empty state on load 
+function removeEmptyState(){
+    const emptyState=document.querySelector(".empty-state");
+    if(emptyState) emptyState.remove();
+}
 
+// add an event to my events list 
+function addEvent(evendata){
+    removeEmptyState();
+    const card= createEventCard(evendata);
+    eventContainer.appendChild(card);
+}
+// form submit 
 eventForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const eventData = {
@@ -58,9 +74,38 @@ eventForm.addEventListener("submit", (event) => {
         date: eventDate.value,
         category: eventCategory.value,
         description: eventDescription.value
-    }
+    };
 
     addEvent(eventData);
     eventForm.reset();
 
-})
+});
+
+// add event button 
+function addEvent(eventData){
+    const card=createEventCard(eventData)
+    eventContainer.appendChild(card);
+}
+
+// clear all events 
+clearAllBtn.addEventListener("click", () => {
+    eventContainer.innerHTML = "";
+    showEmptyState();
+});
+
+// add sampleEvent
+addSampleBtn.addEventListener("click", () => {
+    sampleEvent.forEach(event => {
+        addEvent(event);
+    });
+});
+
+// delete buttons
+eventContainer.addEventListener("click",(event) => {
+    if(event.target.classList.contains("delete-btn")){
+        event.target.parentElement.remove();
+        if(eventContainer.children.length === 0){
+            showEmptyState();
+        }
+    }
+});
